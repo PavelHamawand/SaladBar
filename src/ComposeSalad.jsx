@@ -1,21 +1,22 @@
 import { useState } from 'react';
-import { useOutletContext, useNavigate } from 'react-router-dom'; 
+import { useLoaderData, useNavigate } from 'react-router-dom'; 
 import Salad from './Salad.mjs';
 import { v4 as uuidv4 } from 'uuid'; 
 
 function ComposeSalad() {
-  const { inventory, setShoppingCart } = useOutletContext();
+  const inventory = useLoaderData();  // Load inventory from the loader
   const navigate = useNavigate();
 
-  // State for each form field
+  // State for the salad ingredients
   const [foundation, setFoundation] = useState("");
   const [protein, setProtein] = useState("");
   const [dressing, setDressing] = useState("");
-  const [extras, setExtra] = useState({});
+  const [extras, setExtras] = useState({});
 
-  // Single touched state
+  // State for touched fields to validate the form
   const [touched, setTouched] = useState(false);
-  
+
+  // Filter the inventory for different types of ingredients
   const foundationList = Object.keys(inventory).filter(name => inventory[name].foundation);
   const proteinList = Object.keys(inventory).filter(name => inventory[name].protein);
   const dressList = Object.keys(inventory).filter(name => inventory[name].dressing);
@@ -35,7 +36,7 @@ function ComposeSalad() {
 
   function handleExtraChange(event) {
     const { id, checked } = event.target;
-    setExtra(prevExtras => ({ ...prevExtras, [id]: checked }));
+    setExtras(prevExtras => ({ ...prevExtras, [id]: checked }));
   }
 
   function handleSubmit(event) {
@@ -43,9 +44,8 @@ function ComposeSalad() {
 
     const selectedExtras = Object.keys(extras).filter(c => extras[c]);
 
-    // Form validation logic
     if (!event.target.checkValidity()) {
-      setTouched(true); // Mark form as touched when trying to submit
+      setTouched(true);
       return;
     }
 
@@ -57,39 +57,16 @@ function ComposeSalad() {
 
     selectedExtras.forEach(c => s.add(c, inventory[c].extra));
     const orderId = uuidv4();
-    setShoppingCart((shoppingCart) => [...shoppingCart, s]);
 
+    setShoppingCart((shoppingCart) => [...shoppingCart, s]);
     navigate(`/view-order/confirm/${orderId}`);
-    
+
     // Reset form
     setFoundation("");
     setProtein("");
     setDressing("");
-    setExtra({});
+    setExtras({});
     setTouched(false);
-  }
-
-  const Select = ({ id, labelText, value, onChange, options, touched, errorMessage }) => {
-    return (
-      <>
-        <label htmlFor={id} className="form-label">{labelText}</label>
-        <select 
-          value={value} 
-          onChange={onChange} 
-          className={`form-select ${touched && !value ? 'is-invalid' : ''}`} 
-          id={id} 
-          required
-        >
-          <option value="">Gör ditt val</option>  
-          {options.map(name => (
-            <option key={name} value={name}>
-              {name} ({inventory[name].price} kr)
-            </option>
-          ))}
-        </select>
-        <div className="invalid-feedback">{errorMessage}</div>
-      </>
-    );
   }
 
   return (
@@ -99,33 +76,50 @@ function ComposeSalad() {
 
         <form className={touched ? "was-validated" : ""} onSubmit={handleSubmit} noValidate>
           <fieldset className="col-md-12">
-            <Select 
-              id="foundation"
-              labelText="Välj bas"
-              value={foundation}
-              onChange={handleFoundationChange}
-              options={foundationList}
-              touched={touched}
-              errorMessage="Du måste välja en bas."
-            />
+            {/* Foundation select */}
+            <label htmlFor="foundation" className="form-label">Välj bas</label>
+            <select 
+              value={foundation} 
+              onChange={handleFoundationChange} 
+              className="form-select" 
+              id="foundation" 
+              required
+            >
+              <option value="">Gör ditt val</option>  
+              {foundationList.map(name => (
+                <option key={name} value={name}>
+                  {name} ({inventory[name].price} kr)
+                </option>
+              ))}
+            </select>
+            <div className="invalid-feedback">Du måste välja en bas.</div>
 
-            <Select 
-              id="protein"
-              labelText="Välj protein"
-              value={protein}
-              onChange={handleProteinChange}
-              options={proteinList}
-              touched={touched}
-              errorMessage="Du måste välja ett protein."
-            />
+            {/* Protein select */}
+            <label htmlFor="protein" className="form-label">Välj protein</label>
+            <select 
+              value={protein} 
+              onChange={handleProteinChange} 
+              className="form-select" 
+              id="protein" 
+              required
+            >
+              <option value="">Gör ditt val</option>  
+              {proteinList.map(name => (
+                <option key={name} value={name}>
+                  {name} ({inventory[name].price} kr)
+                </option>
+              ))}
+            </select>
+            <div className="invalid-feedback">Du måste välja ett protein.</div>
 
+            {/* Extras */}
             <label htmlFor="extra" className="form-label">Välj tillbehör</label>
             <div className="row h-200 p-5 bg-light border rounded-3">
               {extraList.map(name => (
                 <div key={name} className="col-4">
                   <input 
                     type="checkbox"
-                    className={`form-check-input ${touched && Object.keys(extras).filter(c => extras[c]).length === 0 ? 'is-invalid' : ''}`}
+                    className="form-check-input"
                     id={name}
                     name={name}
                     checked={extras[name] || false}
@@ -137,19 +131,24 @@ function ComposeSalad() {
                 </div>
               ))}
             </div>
-            {touched && Object.keys(extras).filter(c => extras[c]).length === 0 && (
-              <div className="invalid-feedback d-block">Du måste välja minst ett tillbehör.</div>
-            )}
 
-            <Select 
-              id="dressing"
-              labelText="Välj dressing"
-              value={dressing}
-              onChange={handleDressingChange}
-              options={dressList}
-              touched={touched}
-              errorMessage="Du måste välja en dressing."
-            />
+            {/* Dressing select */}
+            <label htmlFor="dressing" className="form-label">Välj dressing</label>
+            <select 
+              value={dressing} 
+              onChange={handleDressingChange} 
+              className="form-select" 
+              id="dressing" 
+              required
+            >
+              <option value="">Gör ditt val</option>  
+              {dressList.map(name => (
+                <option key={name} value={name}>
+                  {name} ({inventory[name].price} kr)
+                </option>
+              ))}
+            </select>
+            <div className="invalid-feedback">Du måste välja en dressing.</div>
           </fieldset>
 
           <button type="submit" className="btn btn-primary mt-3">Beställ</button>
@@ -157,13 +156,6 @@ function ComposeSalad() {
       </div>
     </div>
   );
-
-  async function inventoryLoader() {
-    const inventory = { Sallad: { price: 10, foundation: true, vegan: true } };
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return inventory;
-    }
-
 }
 
 export default ComposeSalad;

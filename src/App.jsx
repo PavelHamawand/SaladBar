@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-import inventory from './inventory.mjs';
+//import inventory from './inventory.mjs';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+
 
 function App() {
   const [shoppingCart, setShoppingCart] = useState([]);
@@ -13,7 +13,8 @@ function App() {
         <span className="fs-4">Min egen salladsbar</span>
       </header>
       <Navigation />
-      <Outlet context={{ inventory, shoppingCart, setShoppingCart}} />      <footer className="pt-3 mt-4 text-muted border-top">
+      <Outlet context={{  shoppingCart, setShoppingCart}} />      
+      <footer className="pt-3 mt-4 text-muted border-top">
         EDAF90 - webprogrammering
       </footer>
     </div>
