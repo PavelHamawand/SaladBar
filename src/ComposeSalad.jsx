@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom'; 
+import { useOutletContext, useLoaderData, useNavigate } from 'react-router-dom'; 
 import Salad from './Salad.mjs';
 import { v4 as uuidv4 } from 'uuid'; 
 
 function ComposeSalad() {
   const inventory = useLoaderData();  // Load inventory from the loader
+  const { setShoppingCart } = useOutletContext();
   const navigate = useNavigate();
 
   // State for the salad ingredients
