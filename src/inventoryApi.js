@@ -24,6 +24,7 @@ export function safeFetchJson(url) {
   export async function inventoryLoader() {
     const foundationNames = await safeFetchJson('http://localhost:8080/foundations');
     const foundations = await fetchAllIngredients('foundations', foundationNames);
+    await new Promise(resolve => setTimeout(resolve, 500));
   
     const proteinNames = await safeFetchJson('http://localhost:8080/proteins');
     const proteins = await fetchAllIngredients('proteins', proteinNames);

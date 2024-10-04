@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
-//import inventory from './inventory.mjs';
-import { NavLink, Outlet } from 'react-router-dom';
-
+import { useNavigation, NavLink, Outlet } from 'react-router-dom';
 
 function App() {
+  const navigation = useNavigation(); // Get navigation state
   const [shoppingCart, setShoppingCart] = useState([]);
 
   return (
@@ -13,7 +12,12 @@ function App() {
         <span className="fs-4">Min egen salladsbar</span>
       </header>
       <Navigation />
-      <Outlet context={{  shoppingCart, setShoppingCart}} />      
+      {navigation.state === 'loading' ? (
+        <BootstrapSpinner />
+      ) : (
+        <Outlet context={{ shoppingCart, setShoppingCart }} />
+      )}
+      
       <footer className="pt-3 mt-4 text-muted border-top">
         EDAF90 - webprogrammering
       </footer>
@@ -24,7 +28,7 @@ function App() {
 function Navigation() {
   return (
     <ul className="nav nav-tabs">
-       <li className="nav-item">
+      <li className="nav-item">
         <NavLink className="nav-link" to="/">
           Hem
         </NavLink>
@@ -39,8 +43,17 @@ function Navigation() {
           Visa beställning
         </NavLink>
       </li>
-     
     </ul>
+  );
+}
+
+function BootstrapSpinner() {
+  return (
+    <div className="d-flex justify-content-center">
+      <div className="spinner-border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>
   );
 }
 
