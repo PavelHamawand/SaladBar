@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useOutletContext, useLoaderData, useNavigate } from 'react-router-dom'; 
+import { useOutletContext, useLoaderData, useNavigate } from 'react-router-dom';
 import Salad from './Salad.mjs';
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from 'uuid';
 
 function ComposeSalad() {
-  const inventory = useLoaderData();  // Load inventory from the loader
+  const inventory = useLoaderData(); // Load inventory from the loader
   const { setShoppingCart } = useOutletContext();
   const navigate = useNavigate();
 
@@ -50,6 +50,7 @@ function ComposeSalad() {
       return;
     }
 
+    // Create a new salad
     let s = new Salad();
     s
       .add(foundation, inventory[foundation].foundation)
@@ -57,10 +58,10 @@ function ComposeSalad() {
       .add(dressing, inventory[dressing].dressing);
 
     selectedExtras.forEach(c => s.add(c, inventory[c].extra));
-    const orderId = uuidv4();
+    s.uuid = uuidv4(); // Ensure a unique ID for each salad
 
     setShoppingCart((shoppingCart) => [...shoppingCart, s]);
-    navigate(`/view-order/confirm/${orderId}`);
+    navigate(`/view-order/confirm/${s.uuid}`);
 
     // Reset form
     setFoundation("");
