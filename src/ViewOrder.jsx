@@ -8,7 +8,7 @@ function ViewOrder() {
 
   // Function to handle the POST request
   const placeOrder = async () => {
-    const salads = cart.map((salad) => Object.keys(salad.ingridients)); 
+    const salads = cart.map((salad) => Object.keys(salad.ingredients)); 
     const orderDetails = JSON.stringify(salads);
 
     try {
@@ -43,7 +43,7 @@ function ViewOrder() {
           cart.map((salad, index) => (
             <div className="list-unstyled" key={index}>
               <div className="mb-1 p-3 bg-white border rounded">
-                {Object.keys(salad.ingridients).reduce(
+                {Object.keys(salad.ingredients).reduce(
                   (prev, curr) => prev + curr + ", ", ""
                 )}
                 {" pris: " + salad.getPrice() + " kr"}

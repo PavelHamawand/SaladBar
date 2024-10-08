@@ -8,28 +8,17 @@ function App() {
 
   // Initialize shoppingCart from localStorage
   const [shoppingCart, setShoppingCart] = useState(() => {
-    const storedCart = window.localStorage.getItem("shoppingCart");
-    if (storedCart) {
-      try {
-        // Parse stored cart, and recreate Salad objects
-        const parsedCart = JSON.parse(storedCart).map(saladData => new Salad(saladData));
-        return parsedCart;
-      } catch (error) {
-        console.error("Error parsing shoppingCart from localStorage", error);
-        return []; // Fallback to empty cart
-      }
-    }
-    return [];
+    const storedCart = window.localStorage.getItem('shoppingCart');
+
+    return storedCart ? Salad.parse(storedCart) : [];
+   
+
   });
 
   // Whenever the shopping cart changes, update the localStorage
   useEffect(() => {
-    // Store only the relevant properties of each Salad instance
-    const serializedCart = shoppingCart.map(salad => ({
-      ingridients: salad.ingridients, // Correct spelling from "ingredients" to "ingridients"
-      uuid: salad.uuid,
-    }));
-    window.localStorage.setItem("shoppingCart", JSON.stringify(serializedCart));
+  
+    window.localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
   }, [shoppingCart]);
 
   return (
