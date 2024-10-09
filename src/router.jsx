@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from './App';
 import ComposeSalad from "./ComposeSalad";
 import ViewOrder from "./ViewOrder";
-import { inventoryLoader } from "./inventoryApi";
+import inventoryLoader from "./inventoryApi";
 
 const router = createBrowserRouter([
   {
